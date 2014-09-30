@@ -1,0 +1,129 @@
+package ppioo;
+
+import ppioo.utilitarios.utilitarios;
+        
+public abstract class Personagem{
+    private String nome;
+    private double quantidadeVida = 100;
+    
+    public abstract int getDano();
+    
+    public abstract int getResistencia();
+    
+    public abstract String atacar(Personagem atacado);
+   
+    void reagir(int reducao){
+        String saida;
+        boolean defesa = utilitarios.getRandomBoolean();
+        //sofre o dano integralmente
+        sofrerDano(reducao); // diminui a quatidade de vida
+        saida = this.getNome() + "recebeu dano";
+        
+        //depois de sofrer o dano verifica se vai aumentar ou nao
+        if (defesa){
+            this.setQuantidadeVida(this.getResistencia());
+            saida = saida + "mas se defendeu";
+            }
+        return saida;
+        
+    }
+    
+    public void sofrerDano(int reducao){
+        this.quantidadeVida = this.quantidadeVida - reducao;
+    }
+    
+    public String getNome(){
+        return nome;
+    }
+    
+    public void setNome(String nome){
+        this.nome = nome;   
+    }
+    
+    public double getQuantidadeVida(){
+        return quantidadeVida;
+    }
+    
+    public void setQuantidadeVida(double quatidadeVida){
+        this.quantidadeVida = quantidadeVida;
+    }
+    
+}
+
+abstract class Antagonista extends Personagem{
+    abstract String atacar(Personagem atacado);
+}
+ 
+abstract class Protagonista extends Personagem{
+    public abstract double calcularFatorIncremento();
+    
+    public void incrementarVida(Personagem escolha, double fatorIncremento){
+        escolha.setQuantidadeVida(escolha.getQuantidadeVida()+fatorIncremento); 
+    }
+    public String atacar(Personagem escolha){
+        String saida = escolha.reagir(this.getDano());
+        return saida;
+    }
+}
+
+class Tigrinho extends Antagonista{
+    String nome = "Tigrinho";
+    
+    int getDano(){
+        return 10;
+    }
+    
+    int getResistencia(){
+        return 18;
+    }
+}
+
+class MacacoAmericano extends Protagonista{
+    String nome = "Macaco Americano";
+    
+    int getDano(){
+        return 24;
+    }
+    
+    int getResistencia(){
+        return 13;
+    }
+    
+    double calcularFatorIncremento(){
+        return quantidadeVida*0.25;
+    }
+    
+    void incrementarVida(Personagem escolha){
+        escolha.quantidadeVida = escolha.quantidadeVida + calcularFatorIncremento();
+    }
+}
+
+
+
+
+
+public class Ppioo {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        
+        Tigrinho t = new Tigrinho();
+        MacacoAmericano m = new MacacoAmericano();
+        
+        //System.out.println("Escolha seu personagem:\n1 - para Tigrinho\n2 - para Macaco Americano");
+        
+        t.atacar(m);
+        System.out.println(m.quantidadeVida);
+        m.incrementarVida(t);
+        System.out.println(t.quantidadeVida);
+        System.out.println(m.nome);
+        System.out.println(t.nome);
+        
+        
+        
+    }
+}
+    
+
